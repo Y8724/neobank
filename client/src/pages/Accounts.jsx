@@ -135,13 +135,13 @@ const handleDelete = async (id) => {
 
       {/* STATUS */}
       {error && (
-        <p className="text-red-500 mb-3">
+        <p className="text-red-500 dark:text-red-400 mb-3">
           {error}
         </p>
       )}
 
       {message && (
-        <p className="text-green-600 mb-3">
+        <p className="text-green-600 dark:text-green-400 mb-3">
           {message}
         </p>
       )}
@@ -156,15 +156,15 @@ const handleDelete = async (id) => {
     className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition"
   >
 
-    <h2 className="text-xl font-semibold mb-2">
+    <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
       {account.type}
     </h2>
 
-    <p className="text-2xl font-bold text-blue-600 mb-2">
+    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
       ${account.balance}
     </p>
 
-    <p className="text-gray-500 mb-3">
+    <p className="text-gray-500 dark:text-gray-400 mb-3">
       Account ID: {account.id}
     </p>
 

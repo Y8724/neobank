@@ -42,12 +42,17 @@ Built as a portfolio project to demonstrate full-stack development, authenticati
 
 > (Add later — see instructions below)
 
-- Login Page  
-- Dashboard  
-- Accounts  
-- Transactions  
-- Mobile View  
+### Login
+![Login](screenshots/login.png)
 
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Accounts
+![Accounts](screenshots/accounts.png)
+
+### Mobile
+![Mobile](screenshots/mobile.png)
 ---
 
 ## 🚀 Getting Started
