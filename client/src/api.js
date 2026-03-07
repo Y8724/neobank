@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5001/api", // ✅ FIXED
+  baseURL: "https://neobank-4umz.onrender.com/api/auth/login", // ✅ FIXED
 });
 
 api.interceptors.request.use((config) => {
