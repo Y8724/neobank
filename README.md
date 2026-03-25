@@ -49,16 +49,25 @@ Focuses on clean design, layout structure, and user experience.
 > (Add later — see instructions below)
 
 ### Login
-![Login](screenshots/login.png)
+<p align="start">
+  <img src="./screenshots/login.png" width="400" />
+</p>
 
 ### Dashboard
-![Dashboard](screenshots/dashboard.png)
+<p align="start">
+  <img src="./screenshots/dashboard.png" width="400" />
+</p>
 
 ### Accounts
-![Accounts](screenshots/accounts.png)
+<p align="start">
+  <img src="./screenshots/accounts.png" width="400" />
+</p>
 
 ### Mobile
-![Mobile](screenshots/mobile.png)
+<p align="start">
+  <img src="./screenshots/mobile.png" width="400" />
+</p>
+
 ---
 
 ## 🚀 Getting Started
@@ -76,19 +85,19 @@ cd neobank
 cd server
 npm install
 
----
 
 Create .env file:
-PORT=5000
-DB_HOST=localhost
-DB_USER=your_user
-DB_PASSWORD=your_password
-DB_NAME=neobank
-JWT_SECRET=your_secret
+- PORT=5000
+- DB_HOST=localhost
+- DB_USER=your_user
+- DB_PASSWORD=your_password
+- DB_NAME=neobank
+- JWT_SECRET=your_secret
 
 Run server:
 npm start
 
+---
 
 ### 3️⃣ Clone the repository
 
@@ -127,10 +136,11 @@ http://localhost:5173
 
 🔮 Future Improvements
 
-- Add dashboard page
-- Simulated transactions
-- Authentication UI
-- Interactive components
+- Backend integration for real data
+- Persistent user sessions
+- API-based transactions
+- Enhanced security features
+- Advanced analytics (charts & insights)
 
 
 👨‍💻 Author
