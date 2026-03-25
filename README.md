@@ -1,8 +1,14 @@
 # 🏦 NeoBank — Full Stack Banking App
 
-NeoBank is a modern full-stack banking application that allows users to manage accounts, perform transfers, track transactions, and monitor their finances in real time.
+Modern fintech landing app that allows users to manage accounts, perform transfers, track transactions, and monitor their finances in real time.
 
-Built as a portfolio project to demonstrate full-stack development, authentication, UI/UX design, and secure API integration.
+## 🚀 Live Demo
+https://neobankinc.netlify.app/
+
+## 🧠 Description
+A responsive and visually polished fintech UI designed to simulate a modern digital banking experience.
+
+Focuses on clean design, layout structure, and user experience.
 
 ---
 
@@ -59,16 +65,18 @@ Built as a portfolio project to demonstrate full-stack development, authenticati
 
 ### 1️⃣ Clone the repository
 
-```bash
+bash
 git clone https://github.com/your-username/neobank.git
 cd neobank
 
+---
 
 ### 2️⃣ Clone the repository
 
 cd server
 npm install
 
+---
 
 Create .env file:
 PORT=5000
@@ -83,6 +91,7 @@ npm start
 
 
 ### 3️⃣ Clone the repository
+
 cd client
 npm install
 npm run dev
@@ -102,23 +111,31 @@ http://localhost:5173
 | POST   | /accounts/transfer     | Transfer     |
 | GET    | /accounts/transactions | History      |
 
+---
 
 🧠 What I Learned
 
-Full-stack authentication
-Protected routing
-Responsive UI design
-State management
-Secure API communication
-Dark mode implementation
-Component architecture
+- Full-stack authentication
+- Protected routing
+- Responsive UI design
+- State management
+- Secure API communication
+- Dark mode implementation
+- Component architecture
+
+---
+
+🔮 Future Improvements
+
+- Add dashboard page
+- Simulated transactions
+- Authentication UI
+- Interactive components
 
 
 👨‍💻 Author
 
 Yanay Sánchez García
-GitHub: https://github.com/your-username
-LinkedIn: (optional)
 
 
 📜 License
