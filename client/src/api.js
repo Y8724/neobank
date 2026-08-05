@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://neobank-4umz.onrender.com/api", // ✅ FIXED
+  baseURL: `${import.meta.env.VITE_API_URL}/api`, // ✅ FIXED
 });
 
 api.interceptors.request.use((config) => {

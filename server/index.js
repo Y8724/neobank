@@ -19,7 +19,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-    "https://neobankinc.netlify.app"
+      "https://neobankinc.netlify.app",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -34,7 +34,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/accounts", accountRoutes);
 
 // Health check
-app.get("/api/health", auth, async (req, res) => {
+app.get("/api/health", async (req, res) => {
   try {
     const users = await prisma.user.findMany();
 
