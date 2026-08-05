@@ -1,6 +1,6 @@
 import express from "express";
 import { getAccounts, createAccount, deposit, deleteAccount } from "../controllers/accountController.js";
-import { getTransactions, transfer, getMonthlySummary } from "../controllers/transactionController.js";
+import { getTransactions, transfer, getMonthlySummary, getAIInsights } from "../controllers/transactionController.js";
 import auth from "../middleware/auth.js";
 
 
@@ -22,6 +22,7 @@ router.post("/transfer", auth, transfer);
 // SUMMARY
 // =====================
 router.get("/summary/monthly", auth, getMonthlySummary);
+router.get("/summary/ai-insights", auth, getAIInsights);
 
 
 

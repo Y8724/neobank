@@ -9,11 +9,14 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+    setSubmitting(true);
 
     try {
       const res = await api.post("/auth/login", { email, password });
@@ -28,17 +31,19 @@ export default function Login() {
 
     } catch (err) {
       setError(err.response?.data?.msg || "Login failed");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <AuthLayout
-      title="Welcome Back !"
+      title="Welcome back"
       subtitle="Log in to manage your finances"
     >
 
       {error && (
-        <p className="text-red-500 text-sm mb-4 text-center">
+        <p className="text-rose-500 text-sm mb-4 text-center">
           {error}
         </p>
       )}
@@ -51,7 +56,7 @@ export default function Login() {
         {/* Email */}
         <div className="relative">
 
-          <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-300" />
 
           <input
             type="email"
@@ -59,7 +64,7 @@ export default function Login() {
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-700 dark:text-gray-100"
+            className="input pl-10"
           />
 
         </div>
@@ -67,7 +72,7 @@ export default function Login() {
         {/* Password */}
         <div className="relative">
 
-          <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-300" />
 
           <input
             type="password"
@@ -75,7 +80,7 @@ export default function Login() {
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-700 dark:text-gray-100"
+            className="input pl-10"
           />
 
         </div>
@@ -83,21 +88,22 @@ export default function Login() {
         {/* Button */}
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition"
+          disabled={submitting}
+          className="btn-primary w-full disabled:opacity-60 disabled:hover:translate-y-0"
         >
-          Login
+          {submitting ? "Logging in..." : "Log in"}
         </button>
 
       </form>
 
       {/* Footer */}
-      <p className="text-sm text-center mt-6 text-gray-500">
+      <p className="text-sm text-center mt-6 text-brand-400 dark:text-brand-300">
 
         Don’t have an account?{" "}
 
         <Link
           to="/register"
-          className="text-blue-600 hover:underline"
+          className="text-accent-600 dark:text-accent-400 font-medium hover:underline"
         >
           Register
         </Link>

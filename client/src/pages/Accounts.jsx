@@ -1,13 +1,22 @@
 import { useEffect, useState } from "react";
 import api from "../api";
 import { FaWallet } from "react-icons/fa";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaPiggyBank, FaBriefcase } from "react-icons/fa6";
+
+const ACCOUNT_ICON = {
+  Savings: FaPiggyBank,
+  Checking: FaWallet,
+  Business: FaBriefcase,
+};
 
 export default function Accounts() {
   const [accounts, setAccounts] = useState([]);
   const [type, setType] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  const formatMoney = (amount) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
 
   // ======================
   // Load accounts
@@ -45,7 +54,7 @@ export default function Accounts() {
         type,
       });
 
-      setMessage("Account created ✅");
+      setMessage("Account created");
       setType("");
 
       // Reload list
@@ -68,7 +77,7 @@ const handleDelete = async (id) => {
   try {
     await api.delete(`/accounts/${id}`);
 
-    setMessage("Account deleted ✅");
+    setMessage("Account deleted");
 
     fetchAccounts();
 
@@ -87,46 +96,37 @@ const handleDelete = async (id) => {
   // ======================
   return (
     <>
-      <div className="flex items-center gap-2 mb-6">
-        <FaWallet className="text-blue-500" />
+      <div className="flex items-center gap-3 mb-6">
+        <span className="p-2 rounded-lg bg-brand-700 text-white">
+          <FaWallet size={16} />
+        </span>
 
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-3xl font-bold text-brand-900 dark:text-white">
           My Accounts
         </h1>
       </div>
-     
+
 
       {/* CREATE FORM */}
       <form
         onSubmit={handleCreate}
-        className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow mb-6 flex gap-4 items-center"
+        className="card mb-6 flex flex-wrap gap-4 items-center"
       >
 
         <select
           value={type}
           onChange={(e) => setType(e.target.value)}
-          className="input w-48 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 "
+          className="input w-48"
         >
-          <option value="" className="dark:bg-gray-800 dark:text-gray-100">
-            Select type
-          </option>
-
-          <option value="Savings" className="dark:bg-gray-800 dark:text-gray-100">
-            Savings
-          </option>
-
-          <option value="Checking" className="dark:bg-gray-800 dark:text-gray-100">
-            Checking
-          </option>
-
-          <option value="Business" className="dark:bg-gray-800 dark:text-gray-100">
-            Business
-          </option>
+          <option value="">Select type</option>
+          <option value="Savings">Savings</option>
+          <option value="Checking">Checking</option>
+          <option value="Business">Business</option>
         </select>
 
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          className="btn-primary"
         >
           Create Account
         </button>
@@ -135,13 +135,13 @@ const handleDelete = async (id) => {
 
       {/* STATUS */}
       {error && (
-        <p className="text-red-500 dark:text-red-400 mb-3">
+        <p className="text-rose-500 mb-3">
           {error}
         </p>
       )}
 
       {message && (
-        <p className="text-green-600 dark:text-green-400 mb-3">
+        <p className="text-emerald-600 dark:text-emerald-400 mb-3">
           {message}
         </p>
       )}
@@ -149,42 +149,46 @@ const handleDelete = async (id) => {
       {/* ACCOUNTS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        {accounts.map(account => (
+        {accounts.map(account => {
+          const Icon = ACCOUNT_ICON[account.type] || FaWallet;
 
-          <div
-  key={account.id}
-    className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition"
-  >
+          return (
 
-    <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
-      {account.type}
-    </h2>
+          <div key={account.id} className="card">
 
-    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-      ${account.balance}
-    </p>
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-xl font-semibold text-brand-900 dark:text-white">
+                {account.type}
+              </h2>
+              <span className="p-2 rounded-lg bg-brand-50 dark:bg-brand-800 text-brand-600 dark:text-brand-200">
+                <Icon size={14} />
+              </span>
+            </div>
 
-    <p className="text-gray-500 dark:text-gray-400 mb-3">
-      Account ID: {account.id}
-    </p>
+            <p className="text-2xl font-bold text-brand-700 dark:text-brand-300 mb-2">
+              {formatMoney(account.balance)}
+            </p>
 
-    <button
-      onClick={() => handleDelete(account.id)}
-      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
-    >
-      Delete
-    </button>
+            <p className="text-brand-400 dark:text-brand-400 text-sm mb-3">
+              Account ID: {account.id}
+            </p>
 
-</div>
+            <button
+              onClick={() => handleDelete(account.id)}
+              className="btn-red"
+            >
+              Delete
+            </button>
 
-
-        ))}
+          </div>
+          );
+        })}
 
       </div>
 
       {/* EMPTY */}
       {accounts.length === 0 && (
-        <p className="text-gray-500 mt-6">
+        <p className="text-brand-400 dark:text-brand-300 mt-6">
           No accounts yet.
         </p>
       )}

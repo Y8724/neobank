@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "neobank-frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "/Users/apple/Desktop/Web-dvelopment/neobank/client", "run", "dev", "--", "--port", "5175"],
+      "port": 5175
+    }
+  ]
+}

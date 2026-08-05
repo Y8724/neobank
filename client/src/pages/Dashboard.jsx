@@ -3,7 +3,14 @@ import { useNavigate } from "react-router-dom";
 import api from "../api";
 import Modal from "../components/Modal";
 import Toast from "../components/Toast";
+import { FaPiggyBank, FaWallet, FaBriefcase, FaWandMagicSparkles } from "react-icons/fa6";
 
+
+const ACCOUNT_ICON = {
+  Savings: FaPiggyBank,
+  Checking: FaWallet,
+  Business: FaBriefcase,
+};
 
 export default function Dashboard() {
 
@@ -27,6 +34,10 @@ export default function Dashboard() {
   const [depositAmount, setDepositAmount] = useState("");
   const [transferAmount, setTransferAmount] = useState("");
   const [toAccountId, setToAccountId] = useState("");
+
+  const [insight, setInsight] = useState("");
+  const [insightLoading, setInsightLoading] = useState(false);
+  const [insightError, setInsightError] = useState("");
 
   const [toast, setToast] = useState({
     message: "",
@@ -57,9 +68,9 @@ export default function Dashboard() {
 
     const hour = new Date().getHours();
 
-    if (hour < 12) return "Good morning ☀️";
-    if (hour < 18) return "Good afternoon 🌤️";
-    return "Good evening 🌙";
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
   };
 
 
@@ -124,6 +135,26 @@ export default function Dashboard() {
 
 
   /* ===============================
+     AI INSIGHTS
+  =============================== */
+
+  const generateInsights = async () => {
+    setInsightLoading(true);
+    setInsightError("");
+
+    try {
+      const res = await api.get("/accounts/summary/ai-insights");
+      setInsight(res.data.insight);
+    } catch (err) {
+      console.error(err);
+      setInsightError("Couldn't generate insights right now. Try again in a moment.");
+    } finally {
+      setInsightLoading(false);
+    }
+  };
+
+
+  /* ===============================
      FORMAT MONEY
   =============================== */
 
@@ -177,7 +208,7 @@ export default function Dashboard() {
         amount: Number(depositAmount),
       });
 
-      showToast("Deposit successful ✅", "success");
+      showToast("Deposit successful", "success");
 
       setShowDeposit(false);
       setDepositAmount("");
@@ -187,7 +218,7 @@ export default function Dashboard() {
     } catch (err) {
 
       console.error(err);
-      showToast("Deposit failed ❌", "error");
+      showToast("Deposit failed", "error");
     }
   };
 
@@ -216,7 +247,7 @@ export default function Dashboard() {
         amount: Number(transferAmount),
       });
 
-      showToast("Transfer completed ✅", "success");
+      showToast("Transfer completed", "success");
 
       setShowTransfer(false);
       setTransferAmount("");
@@ -227,7 +258,7 @@ export default function Dashboard() {
     } catch (err) {
 
       console.error(err);
-      showToast("Transfer failed ❌", "error");
+      showToast("Transfer failed", "error");
     }
   };
 
@@ -252,7 +283,7 @@ export default function Dashboard() {
     } catch (err) {
 
       console.error(err);
-      showToast("Delete failed ❌", "error");
+      showToast("Delete failed", "error");
     }
   };
 
@@ -264,7 +295,9 @@ export default function Dashboard() {
   return (
     <>
       {/* TOAST */}
-      {toast.message && <Toast {...toast} />}
+      {toast.message && (
+        <Toast {...toast} onClose={() => setToast({ message: "", type: "info" })} />
+      )}
 
 
       {/* HEADER */}
@@ -274,20 +307,19 @@ export default function Dashboard() {
 
           <div>
 
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+            <h1 className="text-3xl font-bold text-brand-900 dark:text-white">
               Dashboard
             </h1>
 
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-brand-500 dark:text-brand-300 mt-1">
               {getGreeting()},{" "}
-              <span className="font-semibold">
+              <span className="font-semibold text-brand-800 dark:text-white">
                 {user?.name || "User"}
-              </span>{" "}
-              👋
+              </span>
             </p>
 
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Here’s a quick look at your finances.
+            <p className="text-sm text-brand-400 dark:text-brand-400 mt-1">
+              Here's a quick look at your finances.
             </p>
 
           </div>
@@ -302,13 +334,13 @@ export default function Dashboard() {
 
 
         {loading && (
-          <p className="text-gray-600 dark:text-gray-400 text-center">
+          <p className="text-brand-400 dark:text-brand-300 text-center">
             Loading...
           </p>
         )}
 
         {error && (
-          <p className="text-red-500 text-center">
+          <p className="text-rose-500 text-center">
             {error}
           </p>
         )}
@@ -317,25 +349,67 @@ export default function Dashboard() {
         {/* SUMMARY */}
         {summary && !loading && (
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
 
             <SummaryCard
               title={`${summary.month} Deposits`}
               value={formatMoney(summary.deposits)}
-              color="text-green-600"
+              color="text-emerald-600 dark:text-emerald-400"
             />
 
             <SummaryCard
               title={`${summary.month} Transfers`}
               value={formatMoney(summary.transfers)}
-              color="text-red-600"
+              color="text-brand-700 dark:text-brand-300"
             />
 
             <SummaryCard
               title="Net Change"
               value={formatMoney(summary.net)}
-              color={summary.net >= 0 ? "text-green-600" : "text-red-600"}
+              color={summary.net >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-500"}
             />
+
+          </div>
+        )}
+
+
+        {/* AI INSIGHTS */}
+        {!loading && (
+          <div className="card mb-8 bg-gradient-to-br from-brand-800 to-brand-900 text-white border-none">
+
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+
+              <div className="flex items-center gap-3">
+                <span className="p-2.5 rounded-xl bg-accent-500/20 text-accent-300">
+                  <FaWandMagicSparkles size={18} />
+                </span>
+                <div>
+                  <h3 className="font-semibold">AI Spending Insights</h3>
+                  <p className="text-sm text-brand-200">
+                    A quick, plain-language read on this month's activity.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={generateInsights}
+                disabled={insightLoading}
+                className="btn-accent text-sm py-2 disabled:opacity-60 disabled:hover:translate-y-0 whitespace-nowrap"
+              >
+                {insightLoading ? "Thinking..." : insight ? "Regenerate" : "Generate insights"}
+              </button>
+
+            </div>
+
+            {insightError && (
+              <p className="text-rose-300 text-sm mt-4">{insightError}</p>
+            )}
+
+            {insight && !insightError && (
+              <p className="text-brand-50 text-sm leading-relaxed mt-4 border-t border-white/10 pt-4">
+                {insight}
+              </p>
+            )}
 
           </div>
         )}
@@ -346,41 +420,48 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            {accounts.map((acc) => (
+            {accounts.map((acc) => {
+              const Icon = ACCOUNT_ICON[acc.type] || FaWallet;
 
+              return (
               <div
                 key={acc.id}
-                className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition"
+                className="card"
               >
 
-                <p className="text-gray-500 dark:text-gray-400 text-sm uppercase">
-                  {acc.type}
-                </p>
+                <div className="flex items-center justify-between">
+                  <p className="text-brand-400 dark:text-brand-300 text-sm uppercase tracking-wide font-medium">
+                    {acc.type}
+                  </p>
+                  <span className="p-2 rounded-lg bg-brand-50 dark:bg-brand-800 text-brand-600 dark:text-brand-200">
+                    <Icon size={14} />
+                  </span>
+                </div>
 
-                <h2 className="text-3xl font-bold mt-3 text-gray-800 dark:text-gray-100">
+                <h2 className="text-3xl font-bold mt-3 text-brand-900 dark:text-white">
                   {formatMoney(acc.balance)}
                 </h2>
 
 
-                <div className="mt-5 flex flex-wrap gap-3">
+                <div className="mt-5 flex flex-wrap gap-2">
 
                   <button
                     onClick={() => openDeposit(acc)}
-                    className="px-3 py-1 rounded bg-green-100 text-green-700 hover:bg-green-200 transition"
+                    className="btn-green"
                   >
                     Deposit
                   </button>
 
                   <button
                     onClick={() => openTransfer(acc)}
-                    className="px-3 py-1 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+                    className="btn-blue"
                   >
                     Transfer
                   </button>
 
                   <button
                     onClick={() => openDelete(acc)}
-                    className="px-3 py-1 rounded bg-red-100 text-red-700 hover:bg-red-200 transition"
+                    className="btn-red"
                   >
                     Delete
                   </button>
@@ -388,7 +469,8 @@ export default function Dashboard() {
                 </div>
 
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
@@ -405,12 +487,12 @@ export default function Dashboard() {
             placeholder="Amount"
             value={depositAmount}
             onChange={(e) => setDepositAmount(e.target.value)}
-            className="w-full border p-2 rounded mb-4 dark:bg-gray-700 dark:text-white"
+            className="input mb-4"
           />
 
           <button
             onClick={handleDeposit}
-            className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
+            className="btn-primary w-full"
           >
             Confirm
           </button>
@@ -428,7 +510,7 @@ export default function Dashboard() {
           <select
             value={toAccountId}
             onChange={(e) => setToAccountId(e.target.value)}
-            className="w-full border p-2 rounded mb-3 dark:bg-gray-700 dark:text-white"
+            className="input mb-3"
           >
 
             <option value="">
@@ -453,13 +535,13 @@ export default function Dashboard() {
             placeholder="Amount"
             value={transferAmount}
             onChange={(e) => setTransferAmount(e.target.value)}
-            className="w-full border p-2 rounded mb-4 dark:bg-gray-700 dark:text-white"
+            className="input mb-4"
           />
 
 
           <button
             onClick={handleTransfer}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+            className="btn-primary w-full"
           >
             Confirm
           </button>
@@ -474,13 +556,13 @@ export default function Dashboard() {
           title="Delete Account"
         >
 
-          <p className="text-red-600 mb-4 text-center">
+          <p className="text-rose-500 mb-4 text-center">
             This action cannot be undone.
           </p>
 
           <button
             onClick={handleDelete}
-            className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition"
+            className="btn-danger w-full"
           >
             Delete
           </button>
@@ -499,9 +581,9 @@ export default function Dashboard() {
 function SummaryCard({ title, value, color }) {
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+    <div className="card">
 
-      <p className="text-gray-500 dark:text-gray-400 text-sm">
+      <p className="text-brand-400 dark:text-brand-300 text-sm">
         {title}
       </p>
 

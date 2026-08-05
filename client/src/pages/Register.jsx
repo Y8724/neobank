@@ -15,11 +15,14 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setSubmitting(true);
 
     try {
       await api.post("/auth/register", {
@@ -28,21 +31,33 @@ export default function Register() {
         password
       });
 
+      // register doesn't return a session, so log in right after
+      // so the new user lands in the app instead of bouncing back to login
+      const res = await api.post("/auth/login", { email, password });
+
+      localStorage.setItem("token", res.data.token);
+
+      if (res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      }
+
       navigate("/dashboard");
 
     } catch (err) {
       setError(err.response?.data?.error || "Something went wrong");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <AuthLayout
-      title="Create Account"
+      title="Create account"
       subtitle="Start managing your money today"
     >
 
       {error && (
-        <p className="text-red-500 text-sm mb-4 text-center">
+        <p className="text-rose-500 text-sm mb-4 text-center">
           {error}
         </p>
       )}
@@ -55,14 +70,14 @@ export default function Register() {
         {/* Name */}
         <div className="relative">
 
-          <FaUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <FaUser className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-300" />
 
           <input
             placeholder="Full name"
             value={name}
             onChange={e => setName(e.target.value)}
             required
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-700"
+            className="input pl-10"
           />
 
         </div>
@@ -70,7 +85,7 @@ export default function Register() {
         {/* Email */}
         <div className="relative">
 
-          <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-300" />
 
           <input
             type="email"
@@ -78,7 +93,7 @@ export default function Register() {
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-700"
+            className="input pl-10"
           />
 
         </div>
@@ -86,7 +101,7 @@ export default function Register() {
         {/* Password */}
         <div className="relative">
 
-          <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-300" />
 
           <input
             type="password"
@@ -94,7 +109,7 @@ export default function Register() {
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-700"
+            className="input pl-10"
           />
 
         </div>
@@ -102,23 +117,24 @@ export default function Register() {
         {/* Button */}
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition"
+          disabled={submitting}
+          className="btn-primary w-full disabled:opacity-60 disabled:hover:translate-y-0"
         >
-          Create Account
+          {submitting ? "Creating account..." : "Create account"}
         </button>
 
       </form>
 
       {/* Footer */}
-      <p className="text-sm text-center mt-6 text-gray-500">
+      <p className="text-sm text-center mt-6 text-brand-400 dark:text-brand-300">
 
         Already have an account?{" "}
 
         <Link
           to="/"
-          className="text-blue-600 hover:underline"
+          className="text-accent-600 dark:text-accent-400 font-medium hover:underline"
         >
-          Login
+          Log in
         </Link>
 
       </p>

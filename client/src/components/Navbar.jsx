@@ -44,11 +44,11 @@ export default function Navbar({ onMenuClick }) {
 
   const linkClass = (path) =>
     location.pathname === path
-      ? "text-blue-600 dark:text-blue-400 font-semibold"
-      : "text-gray-600 dark:text-gray-300 hover:text-blue-500";
+      ? "text-brand-700 dark:text-accent-400 font-semibold"
+      : "text-brand-400 dark:text-brand-300 hover:text-brand-600";
 
   return (
-    <header className="bg-white dark:bg-gray-800 shadow px-4 md:px-8 py-4 flex justify-between items-center text-gray-900 dark:text-gray-100">
+    <header className="bg-white/90 dark:bg-brand-900/90 backdrop-blur-sm shadow-soft px-4 md:px-8 py-4 flex justify-between items-center text-brand-900 dark:text-brand-50 sticky top-0 z-10">
 
       {/* LEFT */}
       <div className="flex items-center gap-4">
@@ -62,8 +62,10 @@ export default function Navbar({ onMenuClick }) {
         </button>
 
         {/* Logo */}
-        <h1 className="flex items-center gap-2 text-xl font-bold text-blue-600">
-          <FaUniversity />
+        <h1 className="flex items-center gap-2 text-xl font-bold text-brand-800 dark:text-white">
+          <span className="p-1.5 rounded-lg bg-brand-700 text-white text-sm">
+            <FaUniversity />
+          </span>
           NeoBank
         </h1>
 
@@ -75,9 +77,9 @@ export default function Navbar({ onMenuClick }) {
         {/* 🌙 Theme */}
         <button
           onClick={() => setDarkMode(!darkMode)}
-          className="text-xl p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+          className="text-xl p-2 rounded-xl hover:bg-brand-50 dark:hover:bg-brand-800 transition"
         >
-          {darkMode ? <FaSun /> : <FaMoon />}
+          {darkMode ? <FaSun className="text-accent-400" /> : <FaMoon className="text-brand-600" />}
         </button>
 
         {/* 🔔 Notifications */}
@@ -85,26 +87,26 @@ export default function Navbar({ onMenuClick }) {
 
           <button
             onClick={() => setNotifOpen(!notifOpen)}
-            className="text-xl relative"
+            className="text-xl relative p-2 rounded-xl hover:bg-brand-50 dark:hover:bg-brand-800 transition"
           >
             <FaBell />
 
-            <span className="absolute -top-1 -right-1 bg-red-500 text-xs text-white rounded-full px-1">
+            <span className="absolute top-0.5 right-0.5 bg-accent-500 text-[10px] text-white rounded-full w-4 h-4 flex items-center justify-center">
               3
             </span>
           </button>
 
           {notifOpen && (
-            <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-700 shadow rounded z-50">
+            <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-brand-800 shadow-soft-lg rounded-xl overflow-hidden animate-fadeIn">
 
-              <div className="p-3 border-b dark:border-gray-600 font-semibold">
+              <div className="p-3 border-b border-brand-50 dark:border-brand-700 font-semibold">
                 Notifications
               </div>
 
-              <div className="p-3 text-sm">
-                ✔ Transfer completed<br />
-                ✔ New account created<br />
-                ✔ Welcome bonus
+              <div className="p-3 text-sm space-y-1 text-brand-600 dark:text-brand-200">
+                <p>✔ Transfer completed</p>
+                <p>✔ New account created</p>
+                <p>✔ Welcome bonus</p>
               </div>
 
             </div>
@@ -117,23 +119,23 @@ export default function Navbar({ onMenuClick }) {
 
           <button
             onClick={() => setProfileOpen(!profileOpen)}
-            className="text-2xl"
+            className="text-2xl text-brand-700 dark:text-brand-200"
           >
             <FaUserCircle />
           </button>
 
           {profileOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-700 shadow rounded z-50">
+            <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-brand-800 shadow-soft-lg rounded-xl overflow-hidden animate-fadeIn">
 
               <button
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                className="block w-full text-left px-4 py-2 hover:bg-brand-50 dark:hover:bg-brand-700 transition"
               >
                 Settings
               </button>
 
               <button
                 onClick={logout}
-                className="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600"
+                className="block w-full text-left px-4 py-2 text-rose-500 hover:bg-brand-50 dark:hover:bg-brand-700 transition"
               >
                 Logout
               </button>

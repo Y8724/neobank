@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
+import { FaArrowRightArrowLeft } from "react-icons/fa6";
 
 
 export default function Transfer() {
@@ -10,8 +11,12 @@ export default function Transfer() {
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const navigate = useNavigate();
+
+  const formatMoney = (amount) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
 
   // =========================
   // Load user accounts
@@ -49,6 +54,8 @@ export default function Transfer() {
       return;
     }
 
+    setSubmitting(true);
+
     try {
       await api.post("/accounts/transfer", {
         fromAccountId: Number(fromId),
@@ -56,7 +63,7 @@ export default function Transfer() {
         amount: Number(amount),
       });
 
-      setMessage("Transfer successful ✅");
+      setMessage("Transfer successful");
 
       setFromId("");
       setToId("");
@@ -70,6 +77,7 @@ export default function Transfer() {
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.msg || "Transfer failed");
+      setSubmitting(false);
     }
   };
 
@@ -77,23 +85,27 @@ export default function Transfer() {
   // Render
   // =========================
   return (
-    <>
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 dark:text-gray-100">
+    <div className="max-w-xl mx-auto">
 
-      <div className="max-w-xl mx-auto mt-10 bg-white dark:bg-gray-700 p-6 rounded-xl shadow">
+      <div className="card mt-4">
 
-        <h1 className="text-2xl font-bold mb-6">
-          Transfer Money
-        </h1>
+        <div className="flex items-center gap-3 mb-6">
+          <span className="p-2 rounded-lg bg-brand-700 text-white">
+            <FaArrowRightArrowLeft size={14} />
+          </span>
+          <h1 className="text-2xl font-bold text-brand-900 dark:text-white">
+            Transfer Money
+          </h1>
+        </div>
 
         {error && (
-          <p className="text-red-500 mb-3">
+          <p className="text-rose-500 mb-3">
             {error}
           </p>
         )}
 
         {message && (
-          <p className="text-green-600 mb-3">
+          <p className="text-emerald-600 dark:text-emerald-400 mb-3">
             {message}
           </p>
         )}
@@ -105,20 +117,20 @@ export default function Transfer() {
 
           {/* FROM */}
           <div>
-            <label className="block text-sm text-gray-600 dark:text-gray-100 mb-1">
+            <label className="block text-sm text-brand-500 dark:text-brand-300 mb-1">
               From Account
             </label>
 
             <select
               value={fromId}
               onChange={(e) => setFromId(e.target.value)}
-              className="w-full border p-2 rounded dark:bg-gray-400 dark:text-gray-800"
+              className="input"
             >
               <option value="">Select account</option>
 
               {accounts.map((acc) => (
                 <option key={acc.id} value={acc.id}>
-                  {acc.type} — ${acc.balance}
+                  {acc.type} — {formatMoney(acc.balance)}
                 </option>
               ))}
             </select>
@@ -126,20 +138,20 @@ export default function Transfer() {
 
           {/* TO */}
           <div>
-            <label className="block text-sm text-gray-600 dark:text-gray-100 mb-1">
+            <label className="block text-sm text-brand-500 dark:text-brand-300 mb-1">
               To Account
             </label>
 
             <select
               value={toId}
               onChange={(e) => setToId(e.target.value)}
-              className="w-full border p-2 rounded dark:bg-gray-400 dark:text-gray-800"
+              className="input"
             >
               <option value="">Select account</option>
 
               {accounts.map((acc) => (
                 <option key={acc.id} value={acc.id}>
-                  {acc.type} — ${acc.balance}
+                  {acc.type} — {formatMoney(acc.balance)}
                 </option>
               ))}
             </select>
@@ -147,7 +159,7 @@ export default function Transfer() {
 
           {/* AMOUNT */}
           <div>
-            <label className="block text-sm text-gray-600 dark:text-gray-100 mb-1">
+            <label className="block text-sm text-brand-500 dark:text-brand-300 mb-1">
               Amount
             </label>
 
@@ -156,7 +168,7 @@ export default function Transfer() {
               step="0.01"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full border p-2 rounded dark:text-gray-900"
+              className="input"
               placeholder="100.00"
             />
           </div>
@@ -164,9 +176,10 @@ export default function Transfer() {
           {/* BUTTON */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg"
+            disabled={submitting}
+            className="btn-primary w-full disabled:opacity-60 disabled:hover:translate-y-0"
           >
-            Send Money
+            {submitting ? "Sending..." : "Send Money"}
           </button>
 
         </form>
@@ -174,6 +187,5 @@ export default function Transfer() {
       </div>
 
     </div>
- </>
   );
 }

@@ -1,4 +1,18 @@
 import prisma from "../prisma/client.js";
+import { generateSpendingInsights } from "../services/aiService.js";
+
+function getCurrentMonthRange() {
+  const start = new Date();
+  start.setDate(1);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date();
+  end.setMonth(end.getMonth() + 1);
+  end.setDate(0);
+  end.setHours(23, 59, 59, 999);
+
+  return { start, end };
+}
 
 /**
  * Get all transactions for the logged-in user
@@ -71,14 +85,7 @@ export const transfer = async (req, res) => {
 // Monthly summary
 export const getMonthlySummary = async (req, res) => {
   try {
-    const start = new Date();
-    start.setDate(1);
-    start.setHours(0, 0, 0, 0);
-
-    const end = new Date();
-    end.setMonth(end.getMonth() + 1);
-    end.setDate(0);
-    end.setHours(23, 59, 59, 999);
+    const { start, end } = getCurrentMonthRange();
 
     const transactions = await prisma.transaction.findMany({
       where: {
@@ -115,5 +122,42 @@ export const getMonthlySummary = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: "Server error" });
+  }
+};
+
+// AI spending insights
+export const getAIInsights = async (req, res) => {
+  try {
+    const { start, end } = getCurrentMonthRange();
+
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        account: { userId: req.user.id },
+        createdAt: { gte: start, lte: end },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    let deposits = 0;
+    let transfers = 0;
+
+    transactions.forEach((tx) => {
+      if (tx.type === "deposit") deposits += tx.amount;
+      if (tx.type === "transfer") transfers += tx.amount;
+    });
+
+    const insight = await generateSpendingInsights({
+      month: start.toLocaleString("default", { month: "long" }),
+      deposits,
+      transfers,
+      net: deposits - transfers,
+      transactions,
+    });
+
+    res.json({ insight });
+
+  } catch (err) {
+    console.error("AI insights failed:", err);
+    res.status(500).json({ msg: "Couldn't generate insights right now" });
   }
 };

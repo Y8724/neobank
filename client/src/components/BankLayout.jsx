@@ -19,7 +19,7 @@ export default function BankLayout() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="min-h-screen bg-amber-50/40 dark:bg-brand-950">
 
       {/* Navbar */}
       <Navbar onMenuClick={() => setSidebarOpen(true)} />
